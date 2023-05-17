@@ -12,7 +12,6 @@ from llama_cpp import Llama
 app = Flask(__name__)
 model = None
 output_text = ""
-continued_text= output_text
 current_topic = None
 inactive_timeout = INACTIVITY_TIMEOUT
 last_activity_time = 0  # Variable to track the time of the last activity
@@ -52,49 +51,47 @@ def send_back_message(user_id, output_text):
         return "Error", 500
     return "success"
 
-def token_gen(token):
-    global output_text, continued_text
-    output_text += token
-
 def reset_conversation():
+    global output_text, current_topic
     model.reset()
+    output_text = ""
+    current_topic = None
 
 def generate_response(message, user_id, username):
     global last_activity_time
     last_activity_time = time.time()
+
     if message.startswith("/reset"):
         reset_conversation()
-        response = "Wizard Reset"
+        response = "Model Reset"
         return send_back_message(user_id, response)
+
     elif message.startswith("/continue"):
-        global continued_text
-        prompt = continued_text
-        def generate_message():
-            global output_text, continued_text, model
-            output = model(prompt, max_tokens=400, temperature=0.8, top_p=0.7, top_k=50, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+        def generate_message(): 
+            global output_text, model
+            output = model(output_text, max_tokens=256, temperature=0.8, top_p=0.7, top_k=50, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
             answer = output["choices"][0]["text"]
-            token_gen(answer)
-            continued_text=output_text.strip(prompt)
-            send_back_message(user_id, continued_text)
+            output_text = answer
+            send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
+
     else:
         global current_topic
         if current_topic:
-            prompt = f"{current_topic} {username}: {message} Assistant:"
+            prompt = f'{current_topic} {username}: {message} Assistant:'
         else:
-            prompt = f"{username}: {message} Assistant:"
+            prompt = f'{username}: {message} Assistant:'
         def generate_message():
             global output_text, model, current_topic
-            output_text = ""
-            output = model(prompt, max_tokens=400, temperature=0.8, top_p=0.7, top_k=50, stop=[f"{username}:"], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
             answer = output["choices"][0]["text"]
-            token_gen(answer)
-            if output_text.endswith("?"):
-                current_topic = f"{prompt} Assistant: {output_text}"
+            output_text = answer
+            if answer.endswith("?"):
+                current_topic = f'{prompt} Assistant: {answer}'
             else:
                 current_topic = None
-            send_back_message(user_id, output_text)
+            send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 

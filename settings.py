@@ -11,3 +11,9 @@ HIGH_MEMORY = 94 #Adjust the high end threshold as per your requirements (percen
 LOW_MEMORY = 40 #Adjust the low end threshold as per your requirements (percentage of memory usage)
 
 FLASK_PORT = 5010
+
+TEMPURATURE = 0.8
+
+TOP_P = 0.7
+
+TOP_K = 50
