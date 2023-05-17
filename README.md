@@ -34,5 +34,7 @@ Features
   
   2)It has a model reset if the conversation strays command    /reset
   
-  3)If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for
+  3)prompt continuation command  /continue
+  
+  4)If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for
   
