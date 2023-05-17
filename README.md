@@ -1,5 +1,5 @@
 # synologyLLM
-using synology chat with LLMs
+using synology chat with LLMs 
 
 Only tested on Windows 10
 
