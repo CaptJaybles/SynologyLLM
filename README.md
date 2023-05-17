@@ -15,7 +15,9 @@ Install
  
   5)pip install -r requirements.txt
   
-  6)Use either command python synologyLLM.py or use synologyLLM.bat file
+  6)Create model folder and place your LLM in the model folder and copy that file name to the setting file
+  
+  7)Use either command python synologyLLM.py or use synologyLLM.bat file
 
 Setup
 
@@ -25,9 +27,7 @@ Setup
   
   3)the outgoing URL in synology integration will be http://IP_ADDRESS:5010/synologyLLM change IP_ADDRESS to what it is on your local PC your running the model on
   
-  4)place your LLM in the model folder and copy that file name to the setting file
-
-
+  
 Features
   
   1)Loads any llama.cpp model that is supported
