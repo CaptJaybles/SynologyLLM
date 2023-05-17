@@ -15,7 +15,7 @@ Install
  
   5)pip install -r requirements.txt
   
-  6)Create model folder and place your LLM in the model folder and copy that file name to the setting file
+  6)place your LLM in the model folder and copy that file name to the settings file
   
   7)Use either command python synologyLLM.py or use synologyLLM.bat file
 
