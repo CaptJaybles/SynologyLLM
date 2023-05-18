@@ -1,7 +1,8 @@
 # synologyLLM
 using synology chat with LLMs
 
-Only tested on Windows 10
+Only tested on Windows 10, builds on llama-ccp-python 
+
 
 Install
   
@@ -15,19 +16,21 @@ Install
  
   5)pip install -r requirements.txt
   
-  6)place your LLM in the model folder and copy that file name to the settings file
-  
-  7)Use either command python synologyLLM.py or use synologyLLM.bat file
+
 
 Setup
 
-  1)setup a new bot in your synology chat app
+  1)place your LLM in the model folder and copy that file name to the settings file
   
-  2)copy the Token and the incoming URL to the settings file
+  2)setup a new bot in your synology chat app
   
-  3)the outgoing URL in synology integration will be http://IP_ADDRESS:5010/synologyLLM change IP_ADDRESS to what it is on your local PC your running the model on
+  3)copy the Token and the incoming URL to the settings file
   
+  4)the outgoing URL in synology integration will be http://IP_ADDRESS:5010/synologyLLM change IP_ADDRESS to what it is on your local PC your running the model on
   
+  5)Use either command python synologyLLM.py or use synologyLLM.bat file
+    
+    
 Features
   
   1)Loads any llama.cpp model that is supported
