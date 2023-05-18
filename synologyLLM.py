@@ -61,22 +61,37 @@ def generate_response(message, user_id, username):
     global last_activity_time
     last_activity_time = time.time()
 
+    #resets model conversation
     if message.startswith("/reset"):
         reset_conversation()
         response = "Model Reset"
         return send_back_message(user_id, response)
 
-    elif message.startswith("/continue"):
+    #reinputs last output to continue generation
+    elif message.startswith("/continue"): 
         def generate_message(): 
             global output_text, model
-            output = model(output_text, max_tokens=256, temperature=0.8, top_p=0.7, top_k=50, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(output_text, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
-    else:
+    #custom prompt
+    elif message.startswith("/override"):
+        def generate_message(): 
+            global output_text, model
+            prompt = message.replace("/override", "").strip()
+            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            answer = output["choices"][0]["text"]
+            output_text = answer
+            send_back_message(user_id, answer)
+        threading.Thread(target=generate_message).start()
+        return "..."
+
+    #normal chat prompt
+    else: 
         global current_topic
         if current_topic:
             prompt = f'{current_topic} {username}: {message} Assistant:'
