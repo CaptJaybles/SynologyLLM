@@ -51,5 +51,15 @@ Features
       
     /continue
     
-  5) If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for (to disable set both HIGH_MEMORY and LOW_MEMORY to 100)
+  5) added prompt override
+
+    /override
+    
+  6) If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for (disabled by default HIGH_MEMORY and LOW_MEMORY are set to 100)
   
+
+TODO
+
+  1) Add support for message queue so more than one person can use service at a time
+  
+  2) Anything else I or anybody else can help with
