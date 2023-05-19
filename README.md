@@ -45,7 +45,7 @@ Features
       
     /reset
   
-  3) built in auto reset after 10 minutes of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
+  3) built in auto reset after 1 Day of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
   
   4) prompt continuation command
       
@@ -55,7 +55,7 @@ Features
 
     /override
     
-  6) If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for (disabled by default HIGH_MEMORY and LOW_MEMORY are set to 100)
+  6) If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for (disabled by default to enable set MEMORY_CHECKER = True)
   
 
 TODO
