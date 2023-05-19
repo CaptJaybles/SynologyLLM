@@ -71,7 +71,7 @@ def generate_response(message, user_id, username):
     elif message.startswith("/continue"): 
         def generate_message(): 
             global output_text, model
-            output = model(output_text, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(output_text, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
@@ -83,7 +83,7 @@ def generate_response(message, user_id, username):
         def generate_message(): 
             global output_text, model
             prompt = message.replace("/override", "").strip()
-            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
@@ -91,7 +91,7 @@ def generate_response(message, user_id, username):
         return "..."
 
     #normal chat prompt
-    else: 
+    else:
         global current_topic
         if current_topic:
             prompt = f'{current_topic} {username}: {message} Assistant:'
@@ -99,13 +99,10 @@ def generate_response(message, user_id, username):
             prompt = f'{username}: {message} Assistant:'
         def generate_message():
             global output_text, model, current_topic
-            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
-            if answer.endswith("?"):
-                current_topic = f'{prompt} Assistant: {answer}'
-            else:
-                current_topic = None
+            current_topic = f'{username}: {message} Assistant: {answer}'
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
