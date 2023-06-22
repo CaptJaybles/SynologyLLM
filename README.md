@@ -22,7 +22,21 @@ Install
     
     pip install -r requirements.txt
   
+Optional GPU Support for CUBLAS 
 
+  1) Open powershell in folder that has all the files
+    
+    python -m venv venv
+
+    pip uninstall -y llama-cpp-python
+
+    $Env:LLAMA_CUBLAS = "1"
+     
+    $Env:FORCE_CMAKE = "1"
+     
+    $Env:CMAKE_ARGS="-DLLAMA_CUBLAS=on"
+     
+    pip install llama-cpp-python --no-cache-dir
 
 Setup
 
@@ -46,8 +60,9 @@ Features
     /reset
   
   3) built in auto reset after 1 Day of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
+     (disabled by default to enable set INACTIVITY_ENABLE = True)
   
-  4) prompt continuation command
+  5) prompt continuation command
       
     /continue
     
