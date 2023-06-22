@@ -13,14 +13,11 @@ app = Flask(__name__)
 model = None
 output_text = ""
 current_topic = None
-inactive_timeout = INACTIVITY_TIMEOUT
 last_activity_time = 0  # Variable to track the time of the last activity
-high_memory_threshold = HIGH_MEMORY
-low_memory_threshold = LOW_MEMORY
 
 def initialize_model():
     global model
-    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=1024)
+    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS)
     warmup_input = "Human: Name the planets in the solar system? Assistant:"
     model(warmup_input, max_tokens=64, stop=["Human:", "\n"], echo=False)
     model.reset()
@@ -28,14 +25,16 @@ def initialize_model():
 
 def check_memory():
     global model
+    enable = MEMORY_CHECKER
     while True:
-        memory_usage = psutil.virtual_memory().percent
-        if memory_usage > high_memory_threshold and model is not None:
-            model = None
-            print("Model suspended due to high memory usage.")
-        elif memory_usage <= low_memory_threshold and model is None:
-            initialize_model()
-            print("Model resumed.")
+        if enable:
+            memory_usage = psutil.virtual_memory().percent
+            if memory_usage > HIGH_MEMORY and model is not None:
+                model = None
+                print("Model suspended due to high memory usage.")
+            elif memory_usage <= LOW_MEMORY and model is None:
+                initialize_model()
+                print("Model resumed.")
         time.sleep(1)  # Check memory every second
 
 def send_back_message(user_id, output_text):
@@ -110,13 +109,14 @@ def generate_response(message, user_id, username):
 @app.before_request
 def check_inactivity():
     global last_activity_time
-    if time.time() - last_activity_time > inactive_timeout:
-        reset_conversation()
-        print("Model Reset")
+    enable = INACTIVITY_ENABLE
+    if enable:
+        if time.time() - last_activity_time > INACTIVITY_TIMEOUT:
+            reset_conversation()
+            print("Model Reset")
 
 @app.route('/synologyLLM', methods=['POST'])
 def chatbot():
-    global model
     token = SYNOCHAT_TOKEN
     webhook = OutgoingWebhook(request.form, token)
     if not webhook.authenticate(token):

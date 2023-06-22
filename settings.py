@@ -1,9 +1,10 @@
-#MODEL_FILENAME = "ggml-vic7b-q4_0.bin"
-#MODEL_FILENAME = "Wizard-Vicuna-7B-Uncensored.ggmlv2.q4_0.bin"
+MODEL_FILENAME = "Wizard-Vicuna-7B-Uncensored.ggmlv3.q4_0.bin" #change to your model of choice
 
 SYNOCHAT_TOKEN = 'Put_your_token_here'
 
 INCOMING_WEBHOOK_URL = "Copy_from_synologychat_incoming_URL"
+
+INACTIVITY_ENABLE = False #True or False(default False is to disable function)
 
 INACTIVITY_TIMEOUT = 86400 # Timeout in seconds for inactivity (10 minutes = 600 seconds)
 
@@ -14,6 +15,10 @@ HIGH_MEMORY = 100 #Adjust the high end threshold as per your requirements (perce
 LOW_MEMORY = 100 #Adjust the low end threshold as per your requirements (percentage of memory usage)
 
 FLASK_PORT = 5010
+
+CONTEXT_LENGTH = 1024
+
+GPU_LAYERS = 0
 
 TEMPURATURE = 0.8
 
