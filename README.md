@@ -48,7 +48,9 @@ Setup
   
   4) the outgoing URL in synology integration will be http://IP_ADDRESS:5010/synologyLLM change IP_ADDRESS to what it is on your local PC your running the model on
   
-  5) Use either command python synologyLLM.py or use synologyLLM.bat file
+  5) Use either synologyLLM.bat file or command
+  
+    python synologyLLM.py
     
     
 Features
@@ -70,7 +72,7 @@ Features
 
     /override
     
-  6) If system runs to low on memory the model with suspend out of RAM until it is back down again, adjust for your own PC Im using a 8GB laptop and thats what the default settings are setup for (disabled by default to enable set MEMORY_CHECKER = True)
+  6) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True)
   
 
 TODO
