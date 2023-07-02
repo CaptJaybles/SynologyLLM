@@ -38,6 +38,8 @@ Optional GPU Support for CUBLAS
      
     pip install llama-cpp-python --no-cache-dir
 
+  2) change GPU layers in settings to what will fit your GPU
+     
 Setup
 
   1) place your LLM in the model folder and copy that file name to the settings file
@@ -73,8 +75,10 @@ Features
     /override
     
   6) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True) *this feature only works correctly if you are using CPU only
-  
 
+  7) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
+
+  
 TODO
 
   1) Add support for message queue so more than one person can use service at a time
