@@ -39,15 +39,27 @@ def check_memory():
 
 def send_back_message(user_id, output_text):
     response = output_text
-    payload = 'payload=' + json.dumps({
-        'text': response,
-        "user_ids": [int(user_id)]
-    })
-    try:
-        response = requests.post(INCOMING_WEBHOOK_URL, payload)
-        response.raise_for_status()
-    except requests.exceptions.RequestException as e:
-        return "Error", 500
+    chunks = []
+    current_chunk = ""
+    sentences = response.split("\n\n")
+    for sentence in sentences:
+        if len(current_chunk) + len(sentence) + 2 <= 256:
+            current_chunk += sentence + "\n\n"
+        else:
+            chunks.append(current_chunk.strip())
+            current_chunk = sentence + "\n\n"
+    if current_chunk:
+        chunks.append(current_chunk.strip())
+    for chunk in chunks:
+        payload = 'payload=' + json.dumps({
+            'text': chunk,
+            "user_ids": [int(user_id)]
+        })
+        try:
+            response = requests.post(INCOMING_WEBHOOK_URL, payload)
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            return "Error", 500
     return "success"
 
 def reset_conversation():
@@ -70,7 +82,7 @@ def generate_response(message, user_id, username):
     elif message.startswith("/continue"): 
         def generate_message(): 
             global output_text, model
-            output = model(output_text, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(output_text, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
@@ -82,7 +94,7 @@ def generate_response(message, user_id, username):
         def generate_message(): 
             global output_text, model
             prompt = message.replace("/override", "").strip()
-            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
@@ -98,7 +110,7 @@ def generate_response(message, user_id, username):
             prompt = f'{username}: {message} Assistant:'
         def generate_message():
             global output_text, model, current_topic
-            output = model(prompt, max_tokens=256, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
             current_topic = f'{username}: {message} Assistant: {answer}'
