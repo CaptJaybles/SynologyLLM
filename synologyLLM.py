@@ -17,7 +17,7 @@ last_activity_time = 0  # Variable to track the time of the last activity
 
 def initialize_model():
     global model
-    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS)
+    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS, lora_base=LORA_BASE, lora_path=LORA_PATH)
     warmup_input = "Human: Name the planets in the solar system? Assistant:"
     model(warmup_input, max_tokens=64, stop=["Human:", "\n"], echo=False)
     model.reset()
@@ -105,15 +105,15 @@ def generate_response(message, user_id, username):
     else:
         global current_topic
         if current_topic:
-            prompt = f'{current_topic} {username}: {message} Assistant:'
+            prompt = f"{STSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{BOT_PROMPT}"
         else:
-            prompt = f'{username}: {message} Assistant:'
+            prompt = f"{STSTEM_PROMPT}{USER_PROMPT}{message}{BOT_PROMPT}"
         def generate_message():
             global output_text, model, current_topic
-            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[f"{username}:"], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=STOP_WORDS, repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
             answer = output["choices"][0]["text"]
             output_text = answer
-            current_topic = f'{username}: {message} Assistant: {answer}'
+            current_topic = f"{USER_PROMPT}{message}\n\n{BOT_PROMPT}{answer}"
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
