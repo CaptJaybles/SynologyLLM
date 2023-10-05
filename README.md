@@ -1,4 +1,4 @@
-# synologyLLM
+# synologyLLM V1.5
 using synology chat with LLMs
 
 Only tested on Windows 10, builds on llama-ccp-python 
