@@ -1,4 +1,4 @@
-# synologyLLM V1.5
+# synologyLLM V1.6
 using synology chat with LLMs
 
 Only tested on Windows 10, builds on llama-ccp-python 
@@ -21,24 +21,6 @@ Install
   5) install the requirements
     
     pip install -r requirements.txt
-  
-Optional GPU Support for CUBLAS 
-
-  1) Open powershell in folder that has all the files
-    
-    python -m venv venv
-
-    pip uninstall -y llama-cpp-python
-
-    $Env:LLAMA_CUBLAS = "1"
-     
-    $Env:FORCE_CMAKE = "1"
-     
-    $Env:CMAKE_ARGS="-DLLAMA_CUBLAS=on"
-     
-    pip install llama-cpp-python --no-cache-dir
-
-  2) change GPU layers in settings to what will fit your GPU
      
 Setup
 
@@ -63,7 +45,7 @@ Features
       
     /reset
   
-  3) built in auto reset after 1 Day of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
+  3) built in auto model reset after 1 Day of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
      (disabled by default to enable set INACTIVITY_ENABLE = True)
   
   5) prompt continuation command
@@ -78,9 +60,4 @@ Features
 
   7) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
 
-  
-TODO
-
-  1) Add support for message queue so more than one person can use service at a time
-  
-  2) Anything else I or anybody else can help with
+  8) Added message queue system
