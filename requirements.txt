@@ -2,12 +2,3 @@ flask
 requests
 psutil
 llama-cpp-python
-
-
-#NVIDIA CARDS for windows only
-#pip uninstall -y llama-cpp-python
-#$Env:LLAMA_CUBLAS = "1"
-#$Env:FORCE_CMAKE = "1"
-#$Env:CMAKE_ARGS="-DLLAMA_CUBLAS=on"
-#pip install llama-cpp-python --no-cache-dir
-

@@ -5,6 +5,7 @@ import time
 import psutil
 import requests
 import threading
+import queue
 from synology import OutgoingWebhook
 from settings import *
 from llama_cpp import Llama
@@ -14,14 +15,16 @@ model = None
 output_text = ""
 current_topic = None
 last_activity_time = 0  # Variable to track the time of the last activity
+task_queue = queue.Queue()
+processing_semaphore = threading.Semaphore(value=1)
 
 def initialize_model():
     global model
-    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS, lora_base=LORA_BASE, lora_path=LORA_PATH)
+    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS, lora_base=LORA_BASE, lora_path=LORA_PATH, rope_freq_base=ROPE_FREQ_BASE, rope_freq_scale=ROPE_FREQ_SCALE)
     warmup_input = "Human: Name the planets in the solar system? Assistant:"
     model(warmup_input, max_tokens=64, stop=["Human:", "\n"], echo=False)
     model.reset()
-    print("Model Loaded")
+    print("LLM Model Loaded")
 
 def check_memory():
     global model
@@ -60,54 +63,51 @@ def send_back_message(user_id, output_text):
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             return "Error", 500
+        finally:
+            processing_semaphore.release()
     return "success"
 
 def reset_conversation():
-    global output_text, current_topic
+    global output_text, current_topic, model
     model.reset()
-    output_text = ""
     current_topic = None
+    output_text = ""
 
 def generate_response(message, user_id, username):
-    global last_activity_time
+    global last_activity_time, current_topic
     last_activity_time = time.time()
 
-    #resets model conversation
     if message.startswith("/reset"):
         reset_conversation()
-        response = "Model Reset"
+        response = "LLM Model Reset"
         return send_back_message(user_id, response)
 
-    #reinputs last output to continue generation
-    elif message.startswith("/continue"): 
+    elif message.startswith("/continue"):
         def generate_message(): 
             global output_text, model
-            output = model(output_text, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(output_text, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
-    #custom prompt
     elif message.startswith("/override"):
         def generate_message(): 
             global output_text, model
             prompt = message.replace("/override", "").strip()
-            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
             answer = output["choices"][0]["text"]
             output_text = answer
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
-    #normal chat prompt
     else:
-        global current_topic
         if current_topic:
-            prompt = f"{STSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{BOT_PROMPT}"
+            prompt = f"{SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{INPUT_PROMPT}{BOT_PROMPT}"
         else:
-            prompt = f"{STSTEM_PROMPT}{USER_PROMPT}{message}{BOT_PROMPT}"
+            prompt = f"{SYSTEM_PROMPT}{USER_PROMPT}{message}{INPUT_PROMPT}{BOT_PROMPT}"
         def generate_message():
             global output_text, model, current_topic
             output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=STOP_WORDS, repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
@@ -136,9 +136,22 @@ def chatbot():
     message = webhook.text
     user_id = webhook.user_id
     username = webhook.username
-    return generate_response(message, user_id, username)
+    task_queue.put((message, user_id, username))
+    return "Task queued for processing"
+
+def process_tasks():
+    while True:
+        processing_semaphore.acquire()
+        try:
+            message, user_id, username = task_queue.get()
+            generate_response(message, user_id, username)
+        finally:
+            task_queue.task_done()
 
 if __name__ == '__main__':
     initialize_model()
-    threading.Thread(target=check_memory).start()
-    app.run('0.0.0.0', port=FLASK_PORT, debug=False, threaded=True, processes=1)
+    memory_thread = threading.Thread(target=check_memory, daemon=True)
+    memory_thread.start()
+    processing_thread = threading.Thread(target=process_tasks, daemon=True)
+    processing_thread.start()
+    app.run('0.0.0.0', port=FLASK_PORT, debug=False, threaded=True)

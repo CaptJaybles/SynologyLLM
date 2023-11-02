@@ -10,7 +10,7 @@ echo Launching application...
 
 REM Run the Python app
 
-python synologyLLM.py %*
+python SynologyLLM.py %*
 set app_result=%errorlevel%
 
 pause >nul
