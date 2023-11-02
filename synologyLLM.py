@@ -148,10 +148,11 @@ def process_tasks():
         finally:
             task_queue.task_done()
 
+    processing_thread = threading.Thread(target=process_tasks, daemon=True)
+    processing_thread.start()
+
 if __name__ == '__main__':
     initialize_model()
     memory_thread = threading.Thread(target=check_memory, daemon=True)
     memory_thread.start()
-    processing_thread = threading.Thread(target=process_tasks, daemon=True)
-    processing_thread.start()
     app.run('0.0.0.0', port=FLASK_PORT, debug=False, threaded=True)
