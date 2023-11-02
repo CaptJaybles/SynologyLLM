@@ -148,8 +148,8 @@ def process_tasks():
         finally:
             task_queue.task_done()
 
-    processing_thread = threading.Thread(target=process_tasks, daemon=True)
-    processing_thread.start()
+processing_thread = threading.Thread(target=process_tasks, daemon=True)
+processing_thread.start()
 
 if __name__ == '__main__':
     initialize_model()
