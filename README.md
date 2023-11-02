@@ -1,5 +1,6 @@
 # synologyLLM V1.6
 using synology chat with LLMs
+
 This is the basic usage of local LLM's check out my other repo SynoLangchain for Memory, RAG, and Wiki Q&A 
 
 Only tested on Windows 10, builds on llama-ccp-python 
