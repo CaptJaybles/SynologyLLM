@@ -1,4 +1,4 @@
-# synologyLLM V1.6
+# SynologyLLM V1.6
 using synology chat with LLMs
 
 This is the basic usage of local LLM's check out my other repo SynoLangchain for Memory, RAG, and Wiki Q&A 
