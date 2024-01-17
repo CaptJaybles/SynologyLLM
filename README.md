@@ -47,26 +47,23 @@ Features
       
     /reset
   
-  3) built in auto model reset after 1 Day of inactivity can be adjusted to longer or shorter in the settings (INACTIVITY_TIMEOUT)
-     (disabled by default to enable set INACTIVITY_ENABLE = True)
-  
-  5) prompt continuation command
+  3) prompt continuation command
       
     /continue
     
-  5) added prompt override
+  4) added prompt override
 
     /override
     
-  6) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True) *this feature only works correctly if you are using CPU only
+  5) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True) *this feature only works correctly if you are using CPU only
 
-  7) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
+  6) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
 
-  8) Added message queue system
+  7) Added message queue system
      
-  9) in case the model doesnt output, added a repeat last output
+  8) in case the model doesnt output, added a repeat last output
 
     /repeat
 
-  10) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
+  9) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
 
