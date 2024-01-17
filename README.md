@@ -77,11 +77,11 @@ Features
      
      BOT_END = '<|im_end|>'
 
-  9) Added message queue system
+  8) Added message queue system
      
-  10) in case the model doesnt output, added a repeat last output
+  9) in case the model doesnt output, added a repeat last output
 
     /repeat
 
-  9) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
+  10) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
 
