@@ -12,15 +12,13 @@ from llama_cpp import Llama
 
 app = Flask(__name__)
 model = None
-output_text = ""
-current_topic = None
-last_activity_time = 0  # Variable to track the time of the last activity
+user_data = {}
 task_queue = queue.Queue()
-processing_semaphore = threading.Semaphore(value=1)
+queue_lock=threading.Semaphore(value=1)
 
 def initialize_model():
     global model
-    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_ctx=CONTEXT_LENGTH, n_gpu_layers=GPU_LAYERS, lora_base=LORA_BASE, lora_path=LORA_PATH, rope_freq_base=ROPE_FREQ_BASE, rope_freq_scale=ROPE_FREQ_SCALE)
+    model = Llama(model_path=f"./model/{MODEL_FILENAME}", n_threads=N_THREADS, n_ctx=N_CTX, n_gpu_layers=N_GPU_LAYERS, lora_base=LORA_BASE, lora_path=LORA_PATH, rope_freq_base=ROPE_FREQ_BASE, rope_freq_scale=ROPE_FREQ_SCALE)
     warmup_input = "Human: Name the planets in the solar system? Assistant:"
     model(warmup_input, max_tokens=64, stop=["Human:", "\n"], echo=False)
     model.reset()
@@ -64,70 +62,58 @@ def send_back_message(user_id, output_text):
         except requests.exceptions.RequestException as e:
             return "Error", 500
         finally:
-            processing_semaphore.release()
-    return "success"
+            pass
+    return queue_lock.release()
 
-def reset_conversation():
-    global output_text, current_topic, model
-    model.reset()
-    current_topic = None
-    output_text = ""
+def generate_response(message, user_id, username, user_context):
+    global model, user_data
 
-def generate_response(message, user_id, username):
-    global last_activity_time, current_topic
-    last_activity_time = time.time()
+    output_text = user_context.get('output_text', '')
+    current_topic = user_context.get('current_topic', '')
 
     if message.startswith("/reset"):
-        reset_conversation()
-        response = "LLM Model Reset"
+        model.reset
+        user_data[user_id] = {'output_text': '', 'current_topic': None}
+        response = "Conversation Reset"
+        return send_back_message(user_id, response)
+
+    if message.startswith("/repeat"):
+        response = output_text
         return send_back_message(user_id, response)
 
     elif message.startswith("/continue"):
-        def generate_message(): 
-            global output_text, model
-            output = model(output_text, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+        def generate_message():
+            output = model(output_text, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15, echo=False)
             answer = output["choices"][0]["text"]
-            output_text = answer
+            user_data[user_id] = {'output_text': answer, 'current_topic': None}
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
     elif message.startswith("/override"):
-        def generate_message(): 
-            global output_text, model
+        def generate_message():
             prompt = message.replace("/override", "").strip()
-            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15, echo=False)
             answer = output["choices"][0]["text"]
-            output_text = answer
+            user_data[user_id] = {'output_text': answer, 'current_topic': None}
             send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
     else:
         if current_topic:
-            prompt = f"{SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{INPUT_PROMPT}{BOT_PROMPT}"
+            prompt = f"{SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}"
         else:
-            prompt = f"{SYSTEM_PROMPT}{USER_PROMPT}{message}{INPUT_PROMPT}{BOT_PROMPT}"
+            prompt = f"{SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}"
         def generate_message():
-            global output_text, model, current_topic
-            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=STOP_WORDS, repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY)
+            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=STOP_WORDS, repeat_penalty=REPEAT_PENALTY, frequency_penalty=FREQUENCY_PENALTY, presence_penalty=PRESENCE_PENALTY, echo=False)
             answer = output["choices"][0]["text"]
-            output_text = answer
-            current_topic = f"{USER_PROMPT}{message}\n\n{BOT_PROMPT}{answer}"
-            send_back_message(user_id, answer)
+            user_data[user_id] = {'output_text': answer, 'current_topic': f"{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}{BOT_END}"}
+            return send_back_message(user_id, answer)
         threading.Thread(target=generate_message).start()
         return "..."
 
-@app.before_request
-def check_inactivity():
-    global last_activity_time
-    enable = INACTIVITY_ENABLE
-    if enable:
-        if time.time() - last_activity_time > INACTIVITY_TIMEOUT:
-            reset_conversation()
-            print("Model Reset")
-
-@app.route('/synologyLLM', methods=['POST'])
+@app.route('/SynologyLLM', methods=['POST'])
 def chatbot():
     token = SYNOCHAT_TOKEN
     webhook = OutgoingWebhook(request.form, token)
@@ -136,15 +122,17 @@ def chatbot():
     message = webhook.text
     user_id = webhook.user_id
     username = webhook.username
-    task_queue.put((message, user_id, username))
+    if user_id not in user_data:
+        user_data[user_id] = {'output_text': '', 'current_topic': None}
+    task_queue.put((message, user_id, username, user_data[user_id]))
     return "Task queued for processing"
 
 def process_tasks():
     while True:
-        processing_semaphore.acquire()
+        queue_lock.acquire()
         try:
-            message, user_id, username = task_queue.get()
-            generate_response(message, user_id, username)
+            message, user_id, username, user_context = task_queue.get()
+            generate_response(message, user_id, username, user_context)
         finally:
             task_queue.task_done()
 
