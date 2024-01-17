@@ -1,4 +1,4 @@
-# SynologyLLM V1.6
+# SynologyLLM V1.7
 using synology chat with LLMs
 
 This is the basic usage of local LLM's check out my other repo SynoLangchain for Memory, RAG, and Wiki Q&A 
@@ -63,3 +63,10 @@ Features
   7) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
 
   8) Added message queue system
+     
+  9) in case the model doesnt output, added a repeat last output
+
+    /repeat
+
+  10) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
+
