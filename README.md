@@ -59,7 +59,7 @@ Features
 
   6) Can change many settings in the settings.py file. ie N_GPU_LAYERS, N_CTX, N_THREADS, LORA_BASE, LORA_PATH, ROPE_FREQ_BASE, ROPE_FREQ_SCALE, MAX_TOKENS, TEMPURATURE, TOP_P, TOP_K, REPEAT_PENALTY, FREQUENCY_PENALTY, PRESENCE_PENALTY, STOP_WORDS
 
-  7) Change the prompts for each indivual model, its setup like this
+  7) Change the prompts for each individual model, its setup like this
      
      #initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
      
