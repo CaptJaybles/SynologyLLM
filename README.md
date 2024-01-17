@@ -32,7 +32,7 @@ Setup
   
   3) copy the Token and the incoming URL to the settings file
   
-  4) the outgoing URL in synology integration will be http://IP_ADDRESS:FLASK_PORT/synologyLLM change IP_ADDRESS and FLASK_PORT to what it is on your local PC your running the model on
+  4) the outgoing URL in synology integration will be http://IP_ADDRESS:FLASK_PORT/SynologyLLM change IP_ADDRESS and FLASK_PORT to what it is on your local PC your running the model on
   
   5) Use either synologyLLM.bat file or command
   
