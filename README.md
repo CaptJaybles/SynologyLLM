@@ -57,11 +57,29 @@ Features
     
   5) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True) *this feature only works correctly if you are using CPU only
 
-  6) Added ability to change model context length CONTEXT_LENGTH and model max tokens generated MAX_TOKENS
+  6) Can change many settings in the settings.py file. ie N_GPU_LAYERS, N_CTX, N_THREADS, LORA_BASE, LORA_PATH, ROPE_FREQ_BASE, ROPE_FREQ_SCALE, MAX_TOKENS, TEMPURATURE, TOP_P, TOP_K, REPEAT_PENALTY, FREQUENCY_PENALTY, PRESENCE_PENALTY, STOP_WORDS
 
-  7) Added message queue system
+  7) Change the prompts for each indivual model, its setup like this
      
-  8) in case the model doesnt output, added a repeat last output
+     #initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
+     
+     #Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}{BOT_END}
+     
+     #final prompt = {SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
+
+     SYSTEM_PROMPT = ""
+     
+     USER_PROMPT = '<|im_start|>user\n'
+     
+     USER_END = '<|im_end|>\n'
+     
+     BOT_PROMPT = '<|im_start|>assistant\n'
+     
+     BOT_END = '<|im_end|>'
+
+  9) Added message queue system
+     
+  10) in case the model doesnt output, added a repeat last output
 
     /repeat
 
