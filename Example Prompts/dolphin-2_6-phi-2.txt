@@ -1,0 +1,4 @@
+SYSTEM_PROMPT = '<|im_start|>system\n{system_message}<|im_end|>\n'
+USER_PROMPT = '<|im_start|>user\n'
+USER_END = '<|im_end|>\n'
+BOT_PROMPT = '<|im_start|>assistant\n'

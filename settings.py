@@ -14,22 +14,21 @@ TOP_K = 100
 REPEAT_PENALTY = 1.3
 FREQUENCY_PENALTY = 0.15
 PRESENCE_PENALTY = 0.15
-STOP_WORDS = ['{username}:', 'Human:', 'user:', '<|im_start|>user', '<|im_end|>'] #comma seperate entries
+STOP_WORDS = ['<|im_start|>user', '<|im_end|>', '</s>'] #comma seperate entries #change first stop word with user prompt entry
 
 FLASK_PORT = 5010
 SYNOCHAT_TOKEN = 'Put_your_token_here'
 INCOMING_WEBHOOK_URL = "Copy_from_synologychat_incoming_URL"
 
-#has the ability for model to use your synology username ex: USER_PROMPT = '{username}: '
 #initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
-#Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}{BOT_END}
+#Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}
 #final prompt = {SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
 
-SYSTEM_PROMPT = ""
+SYSTEM_PROMPT = ''
 USER_PROMPT = '<|im_start|>user\n'
 USER_END = '<|im_end|>\n'
 BOT_PROMPT = '<|im_start|>assistant\n'
-BOT_END = '<|im_end|>'
+
 
 MEMORY_CHECKER = False #True or False(unloads model if memory usage is to high)(only works in cpu mode)
 HIGH_MEMORY = 80 #Adjust the high end threshold as per your requirements (percentage of memory usage)
