@@ -1,4 +1,4 @@
-# SynologyLLM V1.7
+# SynologyLLM V1.8
 using synology chat with LLMs
 
 This is the basic usage of local LLM's check out my other repo SynoLangchain for Memory, RAG, and Wiki Q&A 
@@ -63,7 +63,7 @@ Features
      
      #initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
      
-     #Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}{BOT_END}
+     #Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}
      
      #final prompt = {SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
 
@@ -75,13 +75,8 @@ Features
      
      BOT_PROMPT = '<|im_start|>assistant\n'
      
-     BOT_END = '<|im_end|>'
 
   8) Added message queue system
-     
-  9) in case the model doesnt output, added a repeat last output
 
-    /repeat
-
-  10) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
+  9) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
 
