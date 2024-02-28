@@ -32,10 +32,10 @@ def check_memory():
             memory_usage = psutil.virtual_memory().percent
             if memory_usage > HIGH_MEMORY and model is not None:
                 llm = None
-                print("llm suspended due to high memory usage.")
+                print("llm suspended due to high memory usage")
             elif memory_usage <= LOW_MEMORY and model is None:
                 initialize_llm()
-                print("llm resumed.")
+                print("llm resumed")
         time.sleep(1)  # Check memory every second
 
 def send_back_message(user_id, output_text):
@@ -43,11 +43,8 @@ def send_back_message(user_id, output_text):
     current_chunk = ""
     sentences = output_text.split("\n\n")
     for sentence in sentences:
-        if len(current_chunk) + len(sentence) + 2 <= 256:
-            current_chunk += sentence + "\n\n"
-        else:
-            chunks.append(current_chunk.strip())
-            current_chunk = sentence + "\n\n"
+        chunks.append(current_chunk.strip())
+        current_chunk = sentence + "\n\n"
     if current_chunk:
         chunks.append(current_chunk.strip())
     for chunk in chunks:
@@ -60,8 +57,6 @@ def send_back_message(user_id, output_text):
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             return "Error", 500
-        finally:
-            pass
     return queue_lock.release()
 
 def generate_response(message, user_id, user_context):
@@ -82,7 +77,6 @@ def generate_response(message, user_id, user_context):
             answer = output["choices"][0]["text"]
             if current_topic:
                 new_current_topic = current_topic + answer
-                print(new_current_topic)
                 user_data[user_id] = {'output_text': output_text + answer, 'current_topic': new_current_topic}
             else:
                 user_data[user_id] = {'output_text': output_text + answer, 'current_topic': None}
