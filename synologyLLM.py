@@ -87,7 +87,7 @@ def generate_response(message, user_id, user_context):
     elif message.startswith("/override"):
         def generate_message():
             prompt = message.replace("/override", "").strip()
-            output = model(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15, echo=False)
+            output = llm(prompt, max_tokens=MAX_TOKENS, temperature=TEMPURATURE, top_p=TOP_P, top_k=TOP_K, stop=[], repeat_penalty=1.3, frequency_penalty=0.15, presence_penalty=0.15, echo=False)
             answer = output["choices"][0]["text"]
             user_data[user_id] = {'output_text': answer, 'current_topic': None}
             send_back_message(user_id, answer)
