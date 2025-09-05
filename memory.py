@@ -1,8 +1,6 @@
 import os
 import duckdb
-import re
 from typing import Any, Dict, List, Optional
-from string import punctuation
 import warnings
 
 class EntityStore():
@@ -162,4 +160,5 @@ class EntityMemory():
 
     def clear(self) -> None:
         return self.entities.clear()
+
 
