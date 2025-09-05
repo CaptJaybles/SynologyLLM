@@ -114,8 +114,6 @@ class EntityMemory():
 
     # Define class-level dictionary to store information about entities.
     entities: Dict[str, Optional[str]] = {}
-    # Define key to pass information about entities into prompt.
-    memory_key: str = "entities"
     # Define the directory to save the database file
     db_file: str = "./Memory/entity_memory.db"
     store: EntityStore = None
@@ -132,11 +130,6 @@ class EntityMemory():
 
     def initialize_store(self):
         self.store = EntityStore(session_id=self.session_id, db_file=self.db_file)
-
-    @property
-    def memory_variables(self) -> List[str]:
-        """Define the variables we are providing to the prompt."""
-        return [self.memory_key]
 
     def update_entities(self, entity: str, entity_text: str) -> None:
         if self.store.exists(entity):
@@ -160,5 +153,6 @@ class EntityMemory():
 
     def clear(self) -> None:
         return self.entities.clear()
+
 
 
