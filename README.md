@@ -1,5 +1,5 @@
 # SynologyLLM V2
-using Local AI with Synology AI and Synology Chat
+Local AI to use with for Synology AI and Synology Chat
 
 Only tested on Windows 11 with python 3.11, builds on llama-ccp-python 
 
