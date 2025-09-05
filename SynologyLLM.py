@@ -156,10 +156,12 @@ def generate_response(message, user_id, entity_memory):
                     messages=[
                         *prompt,
                         {"role": "assistant", "content": msg_content},
-                        {"role": "tool", "name": tool_name, "content": result},
+                        {"role": "assistant", "content": f"<tool_result name='{tool_name}'>\n{result}\n</tool_result>"},
                     ],
-                    max_tokens=MAX_TOKENS
-                )    
+                    model=f"{MODEL_FILENAME}",
+                    max_tokens=MAX_TOKENS,
+                    stream=False
+                )   
                 answer = followup_output.choices[0].message.content
             except Exception as e:
                 answer = f"Tool execution error: {str(e)}"
@@ -262,3 +264,4 @@ if __name__ == '__main__':
     processing_memory = threading.Thread(target=process_memory).start()
 
     uvicorn.run(app, host=HOST_IP, port=HOST_PORT)
+
