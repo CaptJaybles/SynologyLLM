@@ -1,5 +1,6 @@
 # SynologyLLM V2
 Local AI to use with for Synology AI and Synology Chat
+-Future Goal is to make this a PC app or a docker app, but Help is needed before that will happen
 
 Only tested on Windows 11 with python 3.11, builds on llama-ccp-python 
 
