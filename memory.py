@@ -1,16 +1,8 @@
-import spacy
-import torch
 import os
 import duckdb
 import re
-from chromadb import PersistentClient
-from chromadb.config import Settings
-from settings import TEXT_SUMMARIZOR, USER_NAME, BOT_NAME
 from typing import Any, Dict, List, Optional
 from string import punctuation
-from spacy.lang.en.stop_words import STOP_WORDS
-from heapq import nlargest
-from transformers import pipeline, logging
 import warnings
 
 class EntityStore():
@@ -170,3 +162,4 @@ class EntityMemory():
 
     def clear(self) -> None:
         return self.entities.clear()
+
