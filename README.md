@@ -76,9 +76,14 @@ Features
 
 To use with synology ai console
 
-  1) Select OpenAI as the provider and under advanced settings use this address
+  1) Select OpenAI as the provider
+
+  2) put in the API key used in settings HOST_API_SECRET
      
-    - put in the API key used in settings HOST_API_SECRET, default is sk-xxx
+    -default is sk-xxx
+     
+  4) Under advanced settins use this address
+     
     - http://Host IP address : host IP port
     - change the values to what you are using
 
