@@ -1,10 +1,7 @@
-# SynologyLLM V1.8
-using synology chat with LLMs
+# SynologyLLM V2
+using Local AI with Synology AI and Synology Chat
 
-This is the basic usage of local LLM's check out my other repo SynoLangchain for Memory, RAG, and Wiki Q&A 
-
-Only tested on Windows 10, builds on llama-ccp-python 
-
+Only tested on Windows 11 with python 3.11, builds on llama-ccp-python 
 
 Install
   
@@ -23,16 +20,20 @@ Install
   5) install the requirements
     
     pip install -r requirements.txt
+
+    -added cuda install directly into requirements, change to your prefered backend as needed
      
 Setup
 
-  1) place your LLM in the model folder and copy that file name to the settings file
+  1) place your LLM in the model folder and copy that file name to the settings file (MODEL_FILENAME="model name.gguf")
   
   2) setup a new bot in your synology chat app
   
-  3) copy the Token and the incoming URL to the settings file
+  3) copy the Token and the incoming URL to the settings file (SYNOCHAT_TOKEN="Token" and SYNOCHAT_WEBHOOK_URL="incoming url")
+        
+    -Now is a good time to change the settings file defaults from what I used for testing on my lowend laptop
   
-  4) the outgoing URL in synology integration will be http://IP_ADDRESS:FLASK_PORT/SynologyLLM change IP_ADDRESS and FLASK_PORT to what it is on your local PC your running the model on
+  4) the outgoing URL in synology integration will be http://HOST_IP:HOST_PORT/SynologyLLM change HOST_IP and HOST_PORT to what it is on your local PC your running the model on
   
   5) Use either synologyLLM.bat file or command
   
@@ -42,41 +43,28 @@ Setup
 Features
   
   1) Loads any llama.cpp model that is supported
+     
+  3) To see list of commands
+      
+    /commands
   
-  2) It has a model reset if the conversation strays command    
+  4) To Reset your conversation and stored setting    
       
     /reset
   
-  3) prompt continuation command
+  5) To change system prompt
       
-    /continue
+    /system {new system prompt message}
     
-  4) added prompt override
+  6) to change how many chat turns is stored in system prompt 
 
-    /override
-    
-  5) If system runs to low on memory the model will suspend out of RAM until it is back down again, adjust for your own PC (disabled by default to enable set MEMORY_CHECKER = True) *this feature only works correctly if you are using CPU only
+    /chat_turns {number of turns}
 
-  6) Can change many settings in the settings.py file. ie N_GPU_LAYERS, N_CTX, N_THREADS, LORA_BASE, LORA_PATH, ROPE_FREQ_BASE, ROPE_FREQ_SCALE, MAX_TOKENS, TEMPURATURE, TOP_P, TOP_K, REPEAT_PENALTY, FREQUENCY_PENALTY, PRESENCE_PENALTY, STOP_WORDS
+  7) To toggle thinking if using a thinking model
 
-  7) Change the prompts for each individual model, its setup like this
-     
-     #initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
-     
-     #Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}
-     
-     #final prompt = {SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
+    /think {true|false}
 
-     SYSTEM_PROMPT = ""
-     
-     USER_PROMPT = '<|im_start|>user\n'
-     
-     USER_END = '<|im_end|>\n'
-     
-     BOT_PROMPT = '<|im_start|>assistant\n'
-     
+  8) Uses a Chat message queue system
 
-  8) Added message queue system
-
-  9) Added multiple user capability, it should keep track of each individual user and the prior message/response on a individual basis
+  9) Added multiple user capability, it keeps track of all the indivual users settings persistantly 
 
