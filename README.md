@@ -66,5 +66,9 @@ Features
 
   8) Uses a Chat message queue system
 
-  9) Added multiple user capability, it keeps track of all the indivual users settings persistantly 
+  9) Added tool usage and some sample tools in the tools.py file
+
+    -tools included are wiki_tool, ddg_tool, weather_tool, time_tool, news_tool 
+
+  10) Added multiple user capability, it keeps track of all the indivual users settings persistantly 
 
