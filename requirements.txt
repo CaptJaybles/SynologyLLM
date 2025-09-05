@@ -1,4 +1,7 @@
-flask
 requests
 psutil
-llama-cpp-python
+duckdb
+Wikipedia
+openai
+python-multipart
+llama-cpp-python[server] -C cmake.args="-DGGML_CUDA=on" @ https://abetlen.github.io/llama-cpp-python/whl/cu124

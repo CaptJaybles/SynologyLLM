@@ -1,36 +1,27 @@
-MODEL_FILENAME = "dolphin-2_6-phi-2.Q6_K.gguf" #model used for testing
-N_GPU_LAYERS = 0 #Number of layers to offload to GPU (-ngl). If -1, all layers are offloaded.
-N_CTX = 0 #Text context, 0 = from model
-N_THREADS = None #Number of threads to use for generation, default: None
-LORA_BASE = None
-LORA_PATH = None
-ROPE_FREQ_BASE = 0.0 #RoPE base frequency, 0 = from model
-ROPE_FREQ_SCALE = 0.0 #RoPE frequency scaling factor, 0 = from model
+MODEL_FILENAME = "Qwen3-4B-Instruct-abliterated-Q6_K.gguf" #model used for testing
+N_GPU_LAYERS = 4         #Number of layers to offload to GPU (-ngl). If -1, all layers are offloaded.
+N_CTX = 8192             #Text context, 0 = from model
+N_THREADS = -1           #Number of threads to use for generation, default: None
 
-MAX_TOKENS = 512
+MAX_TOKENS = None        #default from model
 TEMPURATURE = 0.92
 TOP_P = 0.5
-TOP_K = 100
-REPEAT_PENALTY = 1.3
 FREQUENCY_PENALTY = 0.15
 PRESENCE_PENALTY = 0.15
-STOP_WORDS = ['<|im_start|>user', '<|im_end|>', '</s>'] #comma seperate entries #change first stop word with user prompt entry
 
-FLASK_PORT = 5010
-SYNOCHAT_TOKEN = 'Put_your_token_here'
-INCOMING_WEBHOOK_URL = "Copy_from_synologychat_incoming_URL"
+THINKING_MODEL = False   #True|False (adds thinking blocks to end of user message)
+THINK_MODE = False       #default mode, True|False
+THINK = "/think"         #model think tokens to enable if thinking model
+NO_THINK = "/no_think"   #model think tokens to disable if thinking model
+CHAT_TURNS = 2           #number of turns a chat turns is kept in system prompt
 
-#initial prompt= {SYSTEM_PROMPT}{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
-#Current topic = {USER_PROMPT}{message}{USER_END}{BOT_PROMPT}{answer}
-#final prompt = {SYSTEM_PROMPT}{current_topic}\n\n{USER_PROMPT}{message}{USER_END}{BOT_PROMPT}
+USER_NAME = 'user'       #user name the llm was trained with
+BOT_NAME= 'assistant'    #bot name the llm was trained with
+SYSTEM_PROMPT = f"You are a helpfull Assistent, Be kind and curtious, respond to the user in a natural speaking way, but always be truthfull."
 
-SYSTEM_PROMPT = ''
-USER_PROMPT = '<|im_start|>user\n'
-USER_END = '<|im_end|>\n'
-BOT_PROMPT = '<|im_start|>assistant\n'
+SYNOCHAT_TOKEN = "Token From Synology Chat Bots settings"
+SYNOCHAT_WEBHOOK_URL = "Incoming webhook URL from synology Chat Bots settings"
 
-
-MEMORY_CHECKER = False #True or False(unloads model if memory usage is to high)(only works in cpu mode)
-HIGH_MEMORY = 80 #Adjust the high end threshold as per your requirements (percentage of memory usage)
-LOW_MEMORY = 40 #Adjust the low end threshold as per your requirements (percentage of memory usage)
-
+HOST_IP = "IP Address This Script is Running on"
+HOST_PORT = 5015                   #Port you want the server to run on
+HOST_API_SECRET = "sk-xxx"         #for OpenAI server Compatability
