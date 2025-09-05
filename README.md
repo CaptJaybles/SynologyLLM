@@ -22,6 +22,7 @@ Install
     pip install -r requirements.txt
 
     -added cuda install directly into requirements, change to your prefered backend as needed
+
      
 Setup
 
@@ -70,5 +71,14 @@ Features
 
     -tools included are wiki_tool, ddg_tool, weather_tool, time_tool, news_tool 
 
-  10) Added multiple user capability, it keeps track of all the indivual users settings persistantly 
+  10) Added multiple user capability, it keeps track of all the indivual users settings persistantly
+
+
+To use with synology ai console
+
+  1) Select OpenAI as the provider and under advanced settings use this address
+     
+    - put in the API key used in settings HOST_API_SECRET, default is sk-xxx
+    - http://Host IP address : host IP port
+    - change the values to what you are using
 
