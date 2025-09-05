@@ -152,7 +152,7 @@ def generate_response(message, user_id, entity_memory):
                 tool_name = tool_json["name"]
                 args = tool_json.get("arguments", {})
                 result = dispatch_tool(tool_name, args, user_id)
-                followup_output = llm.create_chat_completion(
+                followup_output = client.chat.completions.create(
                     messages=[
                         *prompt,
                         {"role": "assistant", "content": msg_content},
@@ -260,4 +260,5 @@ if __name__ == '__main__':
     app.include_router(router)
     processing_tasks = threading.Thread(target=process_tasks, daemon=True).start()
     processing_memory = threading.Thread(target=process_memory).start()
+
     uvicorn.run(app, host=HOST_IP, port=HOST_PORT)
