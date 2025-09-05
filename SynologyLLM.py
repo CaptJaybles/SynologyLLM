@@ -184,14 +184,14 @@ def memory_function(user_id, answer, message, entity_memory):
             turns = stored_topic.strip().split("\n[metadata:")
             turns = [("[metadata:" + t).strip() for t in turns if t.strip()]
             turns.append(new_turn)
-            if CHAT_TURNS==0:
+            if chat_turns==0:
                 current_topic = ""
             else:
                 if len(turns) > chat_turns:
                     turns = turns[-chat_turns:]
                 current_topic = "\n".join(turns)
         else:
-            if CHAT_TURNS==0:
+            if chat_turns==0:
                 current_topic = ""
             else:
                 current_topic = new_turn
@@ -264,4 +264,5 @@ if __name__ == '__main__':
     processing_memory = threading.Thread(target=process_memory).start()
 
     uvicorn.run(app, host=HOST_IP, port=HOST_PORT)
+
 
