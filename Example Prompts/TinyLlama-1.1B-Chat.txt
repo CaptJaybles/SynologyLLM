@@ -1,4 +1,0 @@
-SYSTEM_PROMPT = '<|system|>\n{system_message}</s>\n'
-USER_PROMPT = '<|user|>\n'
-USER_END = '</s>\n'
-BOT_PROMPT = '<|assistant|>\n'

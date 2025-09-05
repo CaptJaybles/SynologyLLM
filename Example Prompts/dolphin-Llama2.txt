@@ -1,4 +1,0 @@
-SYSTEM_PROMPT = 'SYSTEM: {system_message}\n'
-USER_PROMPT = 'USER:'
-USER_END = '\n'
-BOT_PROMPT = 'ASSISTANT:'
