@@ -7,6 +7,7 @@ import requests
 import threading
 import queue
 import uvicorn
+import llama_cpp
 from synology import OutgoingWebhook
 from settings import *
 from memory import *
@@ -67,7 +68,7 @@ def generate_response(message, user_id, entity_memory):
         return send_back_message(user_id, output)
 
     if message.startswith("/reset"):
-        llm.reset
+        llama_cpp.Llama.reset(self=app)
         entity_memory.clear()
         entity_memory.store.clear()
         del entity_memory_store[user_id]
@@ -264,5 +265,6 @@ if __name__ == '__main__':
     processing_memory = threading.Thread(target=process_memory).start()
 
     uvicorn.run(app, host=HOST_IP, port=HOST_PORT)
+
 
 
