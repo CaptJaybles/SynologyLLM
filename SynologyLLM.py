@@ -101,12 +101,22 @@ def generate_response(message, user_id, entity_memory):
         try:
             entity_memory.store.set('chat_turns', int(f"{prompt}"))
             response = f"Number of chat turns set to {prompt}"
+            topic_key = f"topic_{user_id}"
+            stored_topic = entity_memory.store.get(topic_key, default=None)
+            if stored_topic not in ("False", "None", "", None, False):
+                turns = stored_topic.strip().split("\n[metadata:")
+                turns = [("[metadata:" + t).strip() for t in turns if t.strip()]
+                if chat_turns==0:
+                    current_topic = ""
+                elif len(turns) > chat_turns:
+                    turns = turns[-chat_turns:]
+                    current_topic = "\n".join(turns)
+                entity_memory.store.set(topic_key, current_topic)
             return send_back_message(user_id, response)
         except:
-            entity_memory.store.set('chat_turns', CHAT_TURNS)
-            response = f"Number of chat turns set to {CHAT_TURNS}"
+            response = f"Error Setting Chat Turn, Invalid number"
             return send_back_message(user_id, response)
-
+            
     topic_key = f"topic_{user_id}"
     stored_topic = entity_memory.store.get(topic_key, default=None)
     if stored_topic == "False":
@@ -177,23 +187,20 @@ def generate_response(message, user_id, entity_memory):
 
 def memory_function(user_id, answer, message, entity_memory):
     try:
-        new_turn = f"{USER_NAME}\n{message}\n{BOT_NAME}\n{answer}"
-        topic_key = f"topic_{user_id}"
-        stored_topic = entity_memory.store.get(topic_key, default=None)
         chat_turns = entity_memory.store.get('chat_turns', default=CHAT_TURNS)
-        if stored_topic not in ("False", "None", "", None, False):
-            turns = stored_topic.strip().split("\n[metadata:")
-            turns = [("[metadata:" + t).strip() for t in turns if t.strip()]
-            turns.append(new_turn)
-            if chat_turns==0:
-                current_topic = ""
-            else:
+        topic_key = f"topic_{user_id}"
+        if chat_turns==0:
+            current_topic = ""
+        else:
+            new_turn = f"{USER_NAME}\n{message}\n{BOT_NAME}\n{answer}"
+            stored_topic = entity_memory.store.get(topic_key, default=None)
+            if stored_topic not in ("False", "None", "", None, False):
+                turns = stored_topic.strip().split("\n[metadata:")
+                turns = [("[metadata:" + t).strip() for t in turns if t.strip()]
+                turns.append(new_turn)
                 if len(turns) > chat_turns:
                     turns = turns[-chat_turns:]
                 current_topic = "\n".join(turns)
-        else:
-            if chat_turns==0:
-                current_topic = ""
             else:
                 current_topic = new_turn
         entity_memory.store.set(topic_key, current_topic)
@@ -265,6 +272,7 @@ if __name__ == '__main__':
     processing_memory = threading.Thread(target=process_memory).start()
 
     uvicorn.run(app, host=HOST_IP, port=HOST_PORT)
+
 
 
 
